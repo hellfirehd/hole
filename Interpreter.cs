@@ -4,91 +4,12 @@ namespace Dkw.Hole
 {
     public class Interpreter
     {
-        private string _text;
-        private int _position;
-        private Int32 Position => _position;
-        private char CurrentChar => _position < _text.Length ? _text[_position] : Char.MinValue;
-        private char NextChar => _position + 1 < _text.Length ? _text[_position + 1] : Char.MinValue;
+        private Lexer _lexer;
         private Token _currentToken;
 
-        public Interpreter(String text)
-        {
-            // client string input, e.g. "3+5"
-            _text = text;
-            // self.pos is an index into self.text
-            _position = 0;
-            // current token instance
-            _currentToken = null;
-        }
-
-        private void AdvancePosition()
-        {
-            _position++;
-            while (Char.IsWhiteSpace(CurrentChar))
-            {
-                _position++;
-            };
-        }
-        private Boolean CanAdvancePosition()
-        {
-            return _position + 1 < _text.Length;
-        }
-
-        private Token GetNextToken()
-        {
-            if (CurrentChar == Char.MinValue)
-            {
-                return new Token(TokenType.EOF);
-            }
-
-            if (Char.IsWhiteSpace(CurrentChar))
-            {
-                AdvancePosition();
-            }
-
-            String chunk = null;
-
-            while (true)
-            {
-                chunk += CurrentChar;
-                // Peek at the next position to see if it's the same class as the current position
-                if (GetClass(CurrentChar) != GetClass(NextChar))
-                {
-                    break;
-                }
-                AdvancePosition();
-            }
-
-            if (Int32.TryParse(chunk, out var i))
-            {
-                AdvancePosition();
-                return new Token<Int32>(TokenType.Integer, i);
-            }
-
-            switch (chunk)
-            {
-                case "+":
-                    AdvancePosition();
-                    return new Token(TokenType.Plus);
-                case "-":
-                    AdvancePosition();
-                    return new Token(TokenType.Minus);
-            }
-
-            throw new Exception($"Error parsing input at {Position}: {chunk}");
-        }
-
-        private CharClass GetClass(char c)
-        {
-            if (Char.IsWhiteSpace(c)) return CharClass.WhiteSpace;
-            if (Char.IsLetter(c)) return CharClass.Letter;
-            if (Char.IsNumber(c)) return CharClass.Number;
-            if (Char.IsDigit(c)) return CharClass.Digit;
-            if (Char.IsPunctuation(c)) return CharClass.Punctuation;
-            if (Char.IsSymbol(c)) return CharClass.Symbol;
-            if (Char.IsSeparator(c)) return CharClass.Separator;
-            if (Char.IsControl(c)) return CharClass.Control;
-            throw new Exception($"I have no idea how to classify '{c}' at {Position}");
+        public Interpreter(Lexer lexer){
+            _lexer = lexer;
+            _currentToken = _lexer.GetNextToken();
         }
 
         private void Eat(params TokenType[] types)
@@ -101,38 +22,56 @@ namespace Dkw.Hole
             {
                 if (_currentToken.Type == t)
                 {
-                    _currentToken = GetNextToken();
+                    _currentToken = _lexer.GetNextToken();
                     return;
                 }
             }
-            throw new Exception($"Did not expect {_currentToken} at {Position}.");
+            throw new Exception($"Did not expect {_currentToken} at {_lexer.Position}.");
         }
 
-        private Int32 Term()
+        private Int32 Factor()
         {
             var token = _currentToken as Token<Int32>;
             Eat(TokenType.Integer);
             return token.Value;
         }
 
-        public Int32 Expr()
-        {
-            _currentToken = GetNextToken();
+        public Int32 Expr() {
+            var result = Factor();
 
-            var result = Term();
-
-            while (_currentToken.Type == TokenType.Plus || _currentToken.Type == TokenType.Minus)
+            while (_currentToken.Type == TokenType.Multiply || _currentToken.Type == TokenType.Divide)
             {
-                var token = _currentToken;
-                switch (token.Type)
+                switch (_currentToken.Type)
                 {
-                    case TokenType.Plus:
-                        Eat(TokenType.Plus);
-                        result += Term();
+                    case TokenType.Multiply:
+                        Eat(TokenType.Multiply);
+                        result = result * Factor();
                         break;
-                    case TokenType.Minus:
-                        Eat(TokenType.Minus);
-                        result -= Term();
+                    case TokenType.Divide:
+                        Eat(TokenType.Divide);
+                        result = result / Factor();
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        public Int32 ExprOld()
+        {
+            var result = Factor();
+
+            while (_currentToken.Type == TokenType.Add || _currentToken.Type == TokenType.Subtract)
+            {
+                switch (_currentToken.Type)
+                {
+                    case TokenType.Add:
+                        Eat(TokenType.Add);
+                        result = result + Factor();
+                        break;
+                    case TokenType.Subtract:
+                        Eat(TokenType.Subtract);
+                        result = result - Factor();
                         break;
                 }
             }

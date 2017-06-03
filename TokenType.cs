@@ -3,8 +3,10 @@ namespace Dkw.Hole
     public enum TokenType
     {
         Integer,
-        Plus,
-        Minus,
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
         EOF
     }
 }

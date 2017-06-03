@@ -12,7 +12,7 @@ namespace Dkw.Hole
                 {
                     Console.WriteLine("Enter an equation or Ctrl+C to exit:");
                     var text = Console.ReadLine();
-                    var interpreter = new Interpreter(text);
+                    var interpreter = new Interpreter(new Lexer(text));
                     var result = interpreter.Expr();
                     Console.WriteLine(result);
                 }
