@@ -9,6 +9,11 @@ namespace Dkw.Hole
             _type = type;
         }
         public TokenType Type => _type;
+
+        public override String ToString()
+        {
+            return $"Token({Type})";
+        }
     }
 
     public class Token<T> : Token
