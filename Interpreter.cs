@@ -5,68 +5,77 @@ namespace Dkw.Hole
     public class Interpreter
     {
         private string _text;
-        private int _pos;
-        private Token _current_token;
+        private int _position;
+        private Int32 Position => _position;
+        private char CurrentChar => _position < _text.Length ? _text[_position] : Char.MinValue;
+        private char NextChar => _position + 1 < _text.Length ? _text[_position + 1] : Char.MinValue;
+        private Token _currentToken;
 
         public Interpreter(String text)
         {
             // client string input, e.g. "3+5"
             _text = text;
             // self.pos is an index into self.text
-            _pos = 0;
+            _position = 0;
             // current token instance
-            _current_token = null;
+            _currentToken = null;
+        }
+
+        private void AdvancePosition()
+        {
+            _position++;
+            while (Char.IsWhiteSpace(CurrentChar))
+            {
+                _position++;
+            };
+        }
+        private Boolean CanAdvancePosition()
+        {
+            return _position + 1 < _text.Length;
         }
 
         private Token GetNextToken()
         {
-            if (_pos > _text.Length - 1)
+            if (CurrentChar == Char.MinValue)
             {
                 return new Token(TokenType.EOF);
             }
 
-            EatWhiteSpace();
+            if (Char.IsWhiteSpace(CurrentChar))
+            {
+                AdvancePosition();
+            }
 
             String chunk = null;
 
             while (true)
             {
-                chunk += _text[_pos];
+                chunk += CurrentChar;
                 // Peek at the next position to see if it's the same class as the current position
-                if (_pos + 1 > _text.Length - 1 || GetClass(_text[_pos]) != GetClass(_text[_pos + 1]))
+                if (GetClass(CurrentChar) != GetClass(NextChar))
                 {
                     break;
                 }
-                _pos++;
+                AdvancePosition();
             }
 
             if (Int32.TryParse(chunk, out var i))
             {
-                _pos++;
+                AdvancePosition();
                 return new Token<Int32>(TokenType.Integer, i);
             }
 
             switch (chunk)
             {
                 case "+":
-                    _pos++;
+                    AdvancePosition();
                     return new Token(TokenType.Plus);
                 case "-":
-                    _pos++;
+                    AdvancePosition();
                     return new Token(TokenType.Minus);
             }
 
-            throw new Exception($"Error parsing input at {_pos}: {chunk}");
-        }
-
-        private void EatWhiteSpace()
-        {
-            while (true)
-            {
-                if (_pos > _text.Length - 1) return;
-                if (GetClass(_text[_pos]) != CharClass.WhiteSpace) return;
-                _pos++;
-            }
+            throw new Exception($"Error parsing input at {Position}: {chunk}");
         }
 
         private CharClass GetClass(char c)
@@ -79,7 +88,7 @@ namespace Dkw.Hole
             if (Char.IsSymbol(c)) return CharClass.Symbol;
             if (Char.IsSeparator(c)) return CharClass.Separator;
             if (Char.IsControl(c)) return CharClass.Control;
-            throw new Exception($"I have no idea how to classify '{c}' at {_pos}");
+            throw new Exception($"I have no idea how to classify '{c}' at {Position}");
         }
 
         private void Eat(params TokenType[] types)
@@ -90,26 +99,26 @@ namespace Dkw.Hole
             // otherwise raise an exception.
             foreach (var t in types)
             {
-                if (_current_token.Type == t)
+                if (_currentToken.Type == t)
                 {
-                    _current_token = GetNextToken();
+                    _currentToken = GetNextToken();
                     return;
                 }
             }
-            throw new Exception($"Error eating token at {_pos}.");
+            throw new Exception($"Error eating token at {Position}.");
         }
 
         public Int32 Expr()
         {
-            _current_token = GetNextToken();
+            _currentToken = GetNextToken();
 
-            var left = _current_token;
+            var left = _currentToken;
             Eat(TokenType.Integer);
 
-            var op = _current_token;
+            var op = _currentToken;
             Eat(TokenType.Plus, TokenType.Minus);
 
-            var right = _current_token;
+            var right = _currentToken;
             Eat(TokenType.Integer);
 
             switch (op.Type)
