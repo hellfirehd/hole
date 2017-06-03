@@ -2,7 +2,8 @@ using System;
 
 namespace Pdsi.Hole
 {
-    public class Token {
+    public class Token
+    {
         private readonly TokenType _type;
         public Token(TokenType type)
         {

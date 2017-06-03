@@ -7,7 +7,8 @@ namespace Pdsi.Hole
         private Lexer _lexer;
         private Token _currentToken;
 
-        public Interpreter(Lexer lexer){
+        public Interpreter(Lexer lexer)
+        {
             _lexer = lexer;
             _currentToken = _lexer.GetNextToken();
         }
@@ -18,10 +19,8 @@ namespace Pdsi.Hole
             // type and if they match then "eat" the current token
             // and assign the next token to the self.current_token,
             // otherwise raise an exception.
-            foreach (var t in types)
-            {
-                if (_currentToken.Type == t)
-                {
+            foreach (var t in types) {
+                if (_currentToken.Type == t) {
                     _currentToken = _lexer.GetNextToken();
                     return;
                 }
@@ -36,13 +35,12 @@ namespace Pdsi.Hole
             return token.Value;
         }
 
-        public Int32 Expr() {
+        public Int32 Expr()
+        {
             var result = Factor();
 
-            while (_currentToken.Type == TokenType.Multiply || _currentToken.Type == TokenType.Divide)
-            {
-                switch (_currentToken.Type)
-                {
+            while (_currentToken.Type == TokenType.Multiply || _currentToken.Type == TokenType.Divide) {
+                switch (_currentToken.Type) {
                     case TokenType.Multiply:
                         Eat(TokenType.Multiply);
                         result = result * Factor();
@@ -61,10 +59,8 @@ namespace Pdsi.Hole
         {
             var result = Factor();
 
-            while (_currentToken.Type == TokenType.Add || _currentToken.Type == TokenType.Subtract)
-            {
-                switch (_currentToken.Type)
-                {
+            while (_currentToken.Type == TokenType.Add || _currentToken.Type == TokenType.Subtract) {
+                switch (_currentToken.Type) {
                     case TokenType.Add:
                         Eat(TokenType.Add);
                         result = result + Factor();
