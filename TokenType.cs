@@ -1,4 +1,4 @@
-namespace Dkw.Hole
+namespace Pdsi.Hole
 {
     public enum TokenType
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dkw.Hole
+namespace Pdsi.Hole
 {
     class Program
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Dkw.Hole
+namespace Pdsi.Hole
 {
     public class Token {
         private readonly TokenType _type;

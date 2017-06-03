@@ -1,8 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RootNamespace>Pdsi.Hole</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Doug Wilson</Authors>
+    <Company>Provision Data Systems Inc.</Company>
+    <Description>Rudimentary Interpreter</Description>
+    <PackageLicenseUrl>https://github.com/dougkwilson/hole/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/dougkwilson/hole</PackageProjectUrl>
+    <Copyright>Provision Data Systems Inc.</Copyright>
+    <RepositoryUrl>https://github.com/dougkwilson/hole.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageId>pdsi-hole</PackageId>
   </PropertyGroup>
 
 </Project>
