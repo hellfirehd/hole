@@ -105,31 +105,39 @@ namespace Dkw.Hole
                     return;
                 }
             }
-            throw new Exception($"Error eating token at {Position}.");
+            throw new Exception($"Did not expect {_currentToken} at {Position}.");
+        }
+
+        private Int32 Term()
+        {
+            var token = _currentToken as Token<Int32>;
+            Eat(TokenType.Integer);
+            return token.Value;
         }
 
         public Int32 Expr()
         {
             _currentToken = GetNextToken();
 
-            var left = _currentToken;
-            Eat(TokenType.Integer);
+            var result = Term();
 
-            var op = _currentToken;
-            Eat(TokenType.Plus, TokenType.Minus);
-
-            var right = _currentToken;
-            Eat(TokenType.Integer);
-
-            switch (op.Type)
+            while (_currentToken.Type == TokenType.Plus || _currentToken.Type == TokenType.Minus)
             {
-                case TokenType.Plus:
-                    return ((Token<Int32>)left).Value + ((Token<Int32>)right).Value;
-                case TokenType.Minus:
-                    return ((Token<Int32>)left).Value - ((Token<Int32>)right).Value;
+                var token = _currentToken;
+                switch (token.Type)
+                {
+                    case TokenType.Plus:
+                        Eat(TokenType.Plus);
+                        result += Term();
+                        break;
+                    case TokenType.Minus:
+                        Eat(TokenType.Minus);
+                        result -= Term();
+                        break;
+                }
             }
 
-            throw new Exception($"Didn't know what to do with: {op}");
+            return result;
         }
     }
 }
