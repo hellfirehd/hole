@@ -63,6 +63,15 @@ namespace Pdsi.Hole.Tests
 		}
 
 		[TestMethod]
+		public void Parenthesized_Expression()
+		{
+			Eval("(0)").Should().Be(0);
+			Eval("(1 + 2)").Should().Be(3);
+			Eval("(1 + 2) * 3").Should().Be(9);
+			Eval("(1 + 2) / 3").Should().Be(1);
+		}
+
+		[TestMethod]
 		public void Order_of_Operations()
 		{
 			Eval("2 + 7 * 4").Should().Be(30);
@@ -70,7 +79,16 @@ namespace Pdsi.Hole.Tests
 			Eval("14 + 2 * 3 - 6 / 2").Should().Be(17);
 		}
 
-		private Int32 Eval(String expression) => new Interpreter(new Lexer(expression)).Expr();
+		[TestMethod]
+		public void Pure_Craziness()
+		{
+			Eval("7 + 3 * (10 / (12 / (3 + 1) - 1))").Should().Be(22);
+			Eval("7 + 3 * (10 / (12 / (3 + 1) - 1)) / (2 + 3) - 5 - 3 + (8)").Should().Be(10);
+			Eval("7 + (((3 + 2)))").Should().Be(12);
+			Eval("(1) + ((2)) * (((3)))").Should().Be(7);
+		}
+
+		private Int32 Eval(String expression) => new Interpreter(new Lexer(expression)).Expression();
 
 	}
 }

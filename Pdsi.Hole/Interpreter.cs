@@ -19,14 +19,26 @@ namespace Pdsi.Hole
 				_currentToken = _lexer.GetNextToken();
 				return;
 			}
-			throw new Exception($"Did not expect {_currentToken}.");
+			throw new InterpreterException($"Did not expect {_currentToken}.");
 		}
 
 		private Int32 Factor()
 		{
 			var token = _currentToken;
-			Eat(TokenType.Integer);
-			return token.Value;
+
+			if (token.TokenType == TokenType.Integer) {
+				Eat(TokenType.Integer);
+				return token.Value;
+			}
+
+			if (token.TokenType == TokenType.LeftParenthesis) {
+				Eat(TokenType.LeftParenthesis);
+				var result = Expression();
+				Eat(TokenType.RightParenthesis);
+				return result;
+			}
+
+			throw new InterpreterException($"Did not expect {_currentToken}.");
 		}
 
 		public Int32 Term()
@@ -49,7 +61,7 @@ namespace Pdsi.Hole
 			return result;
 		}
 
-		public Int32 Expr()
+		public Int32 Expression()
 		{
 			var result = Term();
 

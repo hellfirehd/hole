@@ -72,9 +72,15 @@ namespace Pdsi.Hole
 					case '/':
 						Advance();
 						return new Token(_position, TokenType.Divide);
+					case '(':
+						Advance();
+						return new Token(_position, TokenType.LeftParenthesis);
+					case ')':
+						Advance();
+						return new Token(_position, TokenType.RightParenthesis);
 				}
 
-				throw new Exception($"Error parsing input at {_position}: {_currentChar}");
+				throw new LexerException($"No idea what to do with '{_currentChar}' at position {_position}.");
 			}
 
 			return new Token(_position, TokenType.EOF);

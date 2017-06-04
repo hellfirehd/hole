@@ -23,7 +23,7 @@ namespace Pdsi.Hole.Tests
 		[TestMethod]
 		public void Lexer_parses_operators_correctly()
 		{
-			var text = "+ - * /";
+			var text = "+ - * / ( )";
 
 			var lexer = new Lexer(text);
 
@@ -31,6 +31,8 @@ namespace Pdsi.Hole.Tests
 			lexer.GetNextToken().TokenType.Should().Be(TokenType.Subtract);
 			lexer.GetNextToken().TokenType.Should().Be(TokenType.Multiply);
 			lexer.GetNextToken().TokenType.Should().Be(TokenType.Divide);
+			lexer.GetNextToken().TokenType.Should().Be(TokenType.LeftParenthesis);
+			lexer.GetNextToken().TokenType.Should().Be(TokenType.RightParenthesis);
 			lexer.GetNextToken().TokenType.Should().Be(TokenType.EOF);
 		}
 

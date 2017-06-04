@@ -11,7 +11,7 @@ namespace Pdsi.Hole
                     Console.WriteLine("Enter an equation or Ctrl+C to exit:");
                     var text = Console.ReadLine();
                     var interpreter = new Interpreter(new Lexer(text));
-                    var result = interpreter.Expr();
+                    var result = interpreter.Expression();
                     Console.WriteLine(result);
                 }
                 catch (Exception ex) {
