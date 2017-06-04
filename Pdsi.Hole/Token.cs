@@ -2,36 +2,26 @@ using System;
 
 namespace Pdsi.Hole
 {
-    public class Token
-    {
-        private readonly TokenType _type;
-        public Token(TokenType type)
-        {
-            _type = type;
-        }
-        public TokenType Type => _type;
+	public class Token
+	{
+		private readonly TokenType _type;
+		private readonly Int32? _value;
+		private readonly Int32 _position;
 
-        public override String ToString()
-        {
-            return $"Token({Type})";
-        }
-    }
+		public Token(Int32 position, TokenType type)
+			: this(position, type, null)
+		{
+		}
 
-    public class Token<T> : Token
-    {
-        private readonly T _value;
+		public Token(Int32 position, TokenType type, Int32? value)
+		{
+			_position = position;
+			_type = type;
+			_value = value;
+		}
 
-        public Token(TokenType type, T value)
-            : base(type)
-        {
-            _value = value;
-        }
-
-        public T Value => _value;
-
-        public override String ToString()
-        {
-            return $"Token({Type}, {_value})";
-        }
-    }
+		public TokenType TokenType => _type;
+		public Int32 Value => _value.Value;
+		public override String ToString() => _value.HasValue ? $"Token({TokenType}, {_value}) at {_position}" : $"Token({TokenType}) at {_position}";
+	}
 }

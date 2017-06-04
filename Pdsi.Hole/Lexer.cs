@@ -2,94 +2,82 @@ using System;
 
 namespace Pdsi.Hole
 {
-    public class Lexer
-    {
-        private String _text;
-        private Int32 _position;
+	public class Lexer
+	{
+		private String _text;
+		private Int32 _position;
+		private Char _currentChar;
 
-        public Int32 Position => _position;
-        private Char CurrentChar => _position < _text.Length ? _text[_position] : Char.MinValue;
-        private Char NextChar => _position + 1 < _text.Length ? _text[_position + 1] : Char.MinValue;
+		public Lexer(String text)
+		{
+			_text = text;
+			_position = 0;
+			_currentChar = _text[_position];
+		}
 
-        public Lexer(String text)
-        {
-            _text = text;
-            _position = 0;
-        }
+		private void Advance()
+		{
+			_position++;
+			if (_position > _text.Length - 1)
+				_currentChar = Char.MinValue;
+			else
+				_currentChar = _text[_position];
+		}
 
-        private void AdvancePosition()
-        {
-            _position++;
-            while (Char.IsWhiteSpace(CurrentChar)) {
-                _position++;
-            }
-        }
+		private void SkipWhiteSpace()
+		{
+			while (_currentChar != Char.MinValue && Char.IsWhiteSpace(_currentChar)) {
+				Advance();
+			}
+		}
 
-        public Token GetNextToken()
-        {
-            if (CurrentChar == Char.MinValue) {
-                return new Token(TokenType.EOF);
-            }
+		private Int32 Integer()
+		{
+			var chunk = "";
+			var chunkStart = _position;
+			while (_currentChar != Char.MinValue && Char.IsDigit(_currentChar)) {
+				chunk += _currentChar;
+				Advance();
+			}
+			if (Int32.TryParse(chunk, out var i)) {
+				return i;
+			}
 
-            if (Char.IsWhiteSpace(CurrentChar)) {
-                AdvancePosition();
-            }
-
-            String chunk = null;
-
-            while (true) {
-                chunk += CurrentChar;
-                // Peek at the next position to see if it's the same class as the current position
-                if (GetClass(CurrentChar) != GetClass(NextChar)) {
-                    break;
-                }
-                AdvancePosition();
-            }
-
-            if (Int32.TryParse(chunk, out var i)) {
-                AdvancePosition();
-                return new Token<Int32>(TokenType.Integer, i);
-            }
-
-            switch (chunk) {
-                case "+":
-                    AdvancePosition();
-                    return new Token(TokenType.Add);
-                case "-":
-                    AdvancePosition();
-                    return new Token(TokenType.Subtract);
-                case "*":
-                    AdvancePosition();
-                    return new Token(TokenType.Multiply);
-                case "/":
-                    AdvancePosition();
-                    return new Token(TokenType.Divide);
-            }
-
-            throw new Exception($"Error parsing input at {Position}: {chunk}");
-        }
+			throw new LexerException($"Error parsing input at {chunkStart}: {chunk}");
+		}
 
 
-        private CharClass GetClass(char c)
-        {
-            if (Char.IsWhiteSpace(c))
-                return CharClass.WhiteSpace;
-            if (Char.IsLetter(c))
-                return CharClass.Letter;
-            if (Char.IsNumber(c))
-                return CharClass.Number;
-            if (Char.IsDigit(c))
-                return CharClass.Digit;
-            if (Char.IsPunctuation(c))
-                return CharClass.Punctuation;
-            if (Char.IsSymbol(c))
-                return CharClass.Symbol;
-            if (Char.IsSeparator(c))
-                return CharClass.Separator;
-            if (Char.IsControl(c))
-                return CharClass.Control;
-            throw new Exception($"I have no idea how to classify '{c}' at {Position}");
-        }
+		public Token GetNextToken()
+		{
+			while (_currentChar != Char.MinValue) {
+				if (Char.IsWhiteSpace(_currentChar)) {
+					SkipWhiteSpace();
+					continue;
+				}
 
-    }
+				if (Char.IsDigit(_currentChar)) {
+					return new Token(_position, TokenType.Integer, Integer());
+				}
+
+				switch (_currentChar) {
+					case '+':
+						Advance();
+						return new Token(_position, TokenType.Add);
+					case '-':
+						Advance();
+						return new Token(_position, TokenType.Subtract);
+					case '*':
+						Advance();
+						return new Token(_position, TokenType.Multiply);
+					case '/':
+						Advance();
+						return new Token(_position, TokenType.Divide);
+				}
+
+				throw new Exception($"Error parsing input at {_position}: {_currentChar}");
+			}
+
+			return new Token(_position, TokenType.EOF);
+		}
+	}
 }
