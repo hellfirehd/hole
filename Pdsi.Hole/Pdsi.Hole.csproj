@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <RootNamespace>Pdsi.Hole</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -14,6 +14,9 @@
     <RepositoryUrl>https://github.com/dougkwilson/hole.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageId>pdsi-hole</PackageId>
+    <ApplicationIcon />
+    <OutputTypeEx>library</OutputTypeEx>
+    <StartupObject />
   </PropertyGroup>
 
 </Project>
