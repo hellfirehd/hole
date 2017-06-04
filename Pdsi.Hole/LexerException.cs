@@ -2,7 +2,7 @@
 
 namespace Pdsi.Hole
 {
-	internal class LexerException : Exception
+	public class LexerException : Exception
 	{
 		public LexerException()
 		{

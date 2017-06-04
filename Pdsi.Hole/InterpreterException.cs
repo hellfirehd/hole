@@ -2,7 +2,7 @@
 
 namespace Pdsi.Hole
 {
-	internal class InterpreterException : Exception
+	public class InterpreterException : Exception
 	{
 		public InterpreterException()
 		{

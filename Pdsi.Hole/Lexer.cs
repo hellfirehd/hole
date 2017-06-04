@@ -4,9 +4,9 @@ namespace Pdsi.Hole
 {
 	public class Lexer
 	{
-		private String _text;
-		private Int32 _position;
-		private Char _currentChar;
+		readonly String _text;
+		Int32 _position;
+		Char _currentChar;
 
 		public Lexer(String text)
 		{
@@ -15,7 +15,7 @@ namespace Pdsi.Hole
 			_currentChar = _text[_position];
 		}
 
-		private void Advance()
+		void Advance()
 		{
 			_position++;
 			if (_position > _text.Length - 1)
@@ -24,14 +24,14 @@ namespace Pdsi.Hole
 				_currentChar = _text[_position];
 		}
 
-		private void SkipWhiteSpace()
+		void SkipWhiteSpace()
 		{
 			while (_currentChar != Char.MinValue && Char.IsWhiteSpace(_currentChar)) {
 				Advance();
 			}
 		}
 
-		private Int32 Integer()
+		Int32 Integer()
 		{
 			var chunk = "";
 			var chunkStart = _position;

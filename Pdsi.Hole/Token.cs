@@ -4,9 +4,9 @@ namespace Pdsi.Hole
 {
 	public class Token
 	{
-		private readonly TokenType _type;
-		private readonly Int32? _value;
-		private readonly Int32 _position;
+		readonly TokenType _type;
+		readonly Int32? _value;
+		readonly Int32 _position;
 
 		public Token(Int32 position, TokenType type)
 			: this(position, type, null)
