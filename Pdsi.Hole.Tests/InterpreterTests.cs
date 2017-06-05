@@ -88,7 +88,7 @@ namespace Pdsi.Hole.Tests
 			Eval("(1) + ((2)) * (((3)))").Should().Be(7);
 		}
 
-		private Int32 Eval(String expression) => new Interpreter(new Lexer(expression)).Expression();
+		private Int32 Eval(String expression) => new Interpreter(new Parser(new Lexer(expression))).Interpret();
 
 	}
 }

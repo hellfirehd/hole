@@ -1,84 +1,40 @@
+using Pdsi.Hole.Ast;
 using System;
 
 namespace Pdsi.Hole
 {
-	public class Interpreter
+	public class Interpreter : INodeVisitor
 	{
-		readonly Lexer _lexer;
+		readonly Parser _lexer;
 		Token _currentToken;
 
-		public Interpreter(Lexer lexer)
+		public Interpreter(Parser parser)
 		{
-			_lexer = lexer;
-			_currentToken = _lexer.GetNextToken();
+			_lexer = parser;
 		}
 
-		void Eat(TokenType tokenType)
+		public Int32 Visit(BinaryOperator node)
 		{
-			if (_currentToken.TokenType == tokenType) {
-				_currentToken = _lexer.GetNextToken();
-				return;
+			switch (node.Op.TokenType) {
+				case TokenType.Add:
+					return node.Left.Accept(this) + node.Right.Accept(this);
+				case TokenType.Subtract:
+					return node.Left.Accept(this) - node.Right.Accept(this);
+				case TokenType.Multiply:
+					return node.Left.Accept(this) * node.Right.Accept(this);
+				case TokenType.Divide:
+					return node.Left.Accept(this) / node.Right.Accept(this);
 			}
-			throw new InterpreterException($"Did not expect {_currentToken}.");
+
+			throw new InterpreterException($"Did not expect {node.Op}.");
 		}
 
-		Int32 Factor()
+		public Int32 Visit(Number node) => node.Value;
+
+		public Int32 Interpret()
 		{
-			var token = _currentToken;
-
-			if (token.TokenType == TokenType.Integer) {
-				Eat(TokenType.Integer);
-				return token.Value;
-			}
-
-			if (token.TokenType == TokenType.LeftParenthesis) {
-				Eat(TokenType.LeftParenthesis);
-				var result = Expression();
-				Eat(TokenType.RightParenthesis);
-				return result;
-			}
-
-			throw new InterpreterException($"Did not expect {_currentToken}.");
-		}
-
-		Int32 Term()
-		{
-			var result = Factor();
-
-			while (_currentToken.TokenType == TokenType.Multiply || _currentToken.TokenType == TokenType.Divide) {
-				switch (_currentToken.TokenType) {
-					case TokenType.Multiply:
-						Eat(TokenType.Multiply);
-						result = result * Factor();
-						break;
-					case TokenType.Divide:
-						Eat(TokenType.Divide);
-						result = result / Factor();
-						break;
-				}
-			}
-
-			return result;
-		}
-
-		public Int32 Expression()
-		{
-			var result = Term();
-
-			while (_currentToken.TokenType == TokenType.Add || _currentToken.TokenType == TokenType.Subtract) {
-				switch (_currentToken.TokenType) {
-					case TokenType.Add:
-						Eat(TokenType.Add);
-						result = result + Term();
-						break;
-					case TokenType.Subtract:
-						Eat(TokenType.Subtract);
-						result = result - Term();
-						break;
-				}
-			}
-
-			return result;
+			var ast = _lexer.Parse();
+			return ast.Accept(this);
 		}
 	}
 }
