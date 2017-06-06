@@ -61,6 +61,16 @@ namespace Pdsi.Hole
 		{
 			var token = _currentToken;
 
+			if (token.TokenType == TokenType.Add) {
+				Eat(TokenType.Add);
+				return new UnaryOperator(token, Factor());
+			}
+
+			if (token.TokenType == TokenType.Subtract) {
+				Eat(TokenType.Subtract);
+				return new UnaryOperator(token, Factor());
+			}
+
 			if (token.TokenType == TokenType.Integer) {
 				Eat(TokenType.Integer);
 				return new Number(token);

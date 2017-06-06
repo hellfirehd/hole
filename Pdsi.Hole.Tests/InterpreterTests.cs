@@ -80,6 +80,13 @@ namespace Pdsi.Hole.Tests
 		}
 
 		[TestMethod]
+		public void Unary_Operators()
+		{
+			Eval("5 - - - + - 3").Should().Be(8);
+			Eval("5 - - - + - (3 + 4) - +2").Should().Be(10);
+		}
+
+		[TestMethod]
 		public void Pure_Craziness()
 		{
 			Eval("7 + 3 * (10 / (12 / (3 + 1) - 1))").Should().Be(22);
