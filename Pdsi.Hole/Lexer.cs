@@ -31,6 +31,16 @@ namespace Pdsi.Hole
 			}
 		}
 
+		Char Peek()
+		{
+			var peekPos = _position + 1;
+			if (peekPos > _text.Length - 1) {
+				return Char.MinValue;
+			}
+
+			return _text[peekPos];
+		}
+
 		Int32 Integer()
 		{
 			var chunk = "";
