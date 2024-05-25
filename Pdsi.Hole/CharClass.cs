@@ -1,14 +1,13 @@
-namespace Pdsi.Hole
+namespace Pdsi.Hole;
+
+internal enum CharClass
 {
-    internal enum CharClass
-    {
-        Digit,
-        Control,
-        Letter,
-        Number,
-        Punctuation,
-        Separator,
-        Symbol,
-        WhiteSpace,
-    }
+	Digit,
+	Control,
+	Letter,
+	Number,
+	Punctuation,
+	Separator,
+	Symbol,
+	WhiteSpace,
 }

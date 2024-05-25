@@ -1,51 +1,32 @@
 using Pdsi.Hole.Ast;
-using System;
 
-namespace Pdsi.Hole
+namespace Pdsi.Hole;
+
+public class Interpreter(Parser parser) : INodeVisitor
 {
-	public class Interpreter : INodeVisitor
+	private readonly Parser _parser = parser;
+
+	public Int32 Visit(Number node) => node.Value;
+
+	public Int32 Visit(UnaryOperator node) => node.Op.TokenType switch
 	{
-		readonly Parser _lexer;
+		TokenType.Add => +node.Expression.Accept(this),
+		TokenType.Subtract => -node.Expression.Accept(this),
+		_ => throw new InterpreterException($"Did not expect {node.Op}."),
+	};
 
-		public Interpreter(Parser parser)
-		{
-			_lexer = parser;
-		}
+	public Int32 Visit(BinaryOperator node) => node.Op.TokenType switch
+	{
+		TokenType.Add => node.Left.Accept(this) + node.Right.Accept(this),
+		TokenType.Subtract => node.Left.Accept(this) - node.Right.Accept(this),
+		TokenType.Multiply => node.Left.Accept(this) * node.Right.Accept(this),
+		TokenType.Divide => node.Left.Accept(this) / node.Right.Accept(this),
+		_ => throw new InterpreterException($"Did not expect {node.Op}."),
+	};
 
-		public Int32 Visit(Number node) => node.Value;
-
-		public Int32 Visit(UnaryOperator node)
-		{
-			switch (node.Op.TokenType) {
-				case TokenType.Add:
-					return +node.Expression.Accept(this);
-				case TokenType.Subtract:
-					return -node.Expression.Accept(this);
-			}
-
-			throw new InterpreterException($"Did not expect {node.Op}.");
-		}
-
-		public Int32 Visit(BinaryOperator node)
-		{
-			switch (node.Op.TokenType) {
-				case TokenType.Add:
-					return node.Left.Accept(this) + node.Right.Accept(this);
-				case TokenType.Subtract:
-					return node.Left.Accept(this) - node.Right.Accept(this);
-				case TokenType.Multiply:
-					return node.Left.Accept(this) * node.Right.Accept(this);
-				case TokenType.Divide:
-					return node.Left.Accept(this) / node.Right.Accept(this);
-			}
-
-			throw new InterpreterException($"Did not expect {node.Op}.");
-		}
-
-		public Int32 Interpret()
-		{
-			var ast = _lexer.Parse();
-			return ast.Accept(this);
-		}
+	public Int32 Interpret()
+	{
+		var ast = _parser.Parse();
+		return ast.Accept(this);
 	}
 }

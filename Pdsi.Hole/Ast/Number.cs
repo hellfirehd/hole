@@ -1,18 +1,10 @@
-﻿using System;
+﻿namespace Pdsi.Hole.Ast;
 
-namespace Pdsi.Hole.Ast
+public class Number(Token token) : INode
 {
-	public class Number : INode
-	{
-		readonly Token _number;
+	private readonly Token _number = token;
 
-		public Number(Token token)
-		{
-			_number = token;
-		}
+	public Int32 Value => _number?.Value ?? 0;
 
-		public Int32 Value => _number.Value;
-
-		public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
-	}
+	public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
 }

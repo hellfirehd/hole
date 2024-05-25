@@ -1,25 +1,11 @@
-﻿using System;
+﻿namespace Pdsi.Hole.Ast;
 
-namespace Pdsi.Hole.Ast
+public class BinaryOperator(INode left, Token op, INode right) : INode
 {
-	public class BinaryOperator : INode
-	{
-		readonly INode _left;
-		readonly Token _op;
-		readonly INode _right;
+	public Token Op { get; } = op;
 
-		public BinaryOperator(INode left, Token op, INode right)
-		{
-			_left = left;
-			_op = op;
-			_right = right;
-		}
+	public INode Left { get; } = left;
+	public INode Right { get; } = right;
 
-		public Token Op => _op;
-
-		public INode Left => _left;
-		public INode Right => _right;
-
-		public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
-	}
+	public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
 }

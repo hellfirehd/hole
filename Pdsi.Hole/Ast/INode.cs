@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Pdsi.Hole.Ast;
 
-namespace Pdsi.Hole.Ast
+public interface INode
 {
-	public interface INode
-	{
-		Int32 Accept(INodeVisitor visitor);
-	}
+	Int32 Accept(INodeVisitor visitor);
 }

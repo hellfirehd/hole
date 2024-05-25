@@ -1,14 +1,13 @@
-namespace Pdsi.Hole
+namespace Pdsi.Hole;
+
+public enum TokenType
 {
-	public enum TokenType
-	{
-		Integer,
-		Add,
-		Subtract,
-		Multiply,
-		Divide,
-		LeftParenthesis,
-		RightParenthesis,
-		EOF
-	}
+	Integer,
+	Add,
+	Subtract,
+	Multiply,
+	Divide,
+	LeftParenthesis,
+	RightParenthesis,
+	EOF
 }

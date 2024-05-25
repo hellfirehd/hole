@@ -1,22 +1,10 @@
-﻿using System;
+﻿namespace Pdsi.Hole.Ast;
 
-namespace Pdsi.Hole.Ast
+public class UnaryOperator(Token op, INode expression) : INode
 {
-	public class UnaryOperator : INode
-	{
-		readonly Token _op;
-		readonly INode _expression;
+	public Token Op { get; } = op;
 
-		public UnaryOperator(Token op, INode expression)
-		{
-			_op = op;
-			_expression = expression;
-		}
+	public INode Expression { get; } = expression;
 
-		public Token Op => _op;
-
-		public INode Expression => _expression;
-
-		public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
-	}
+	public Int32 Accept(INodeVisitor visitor) => visitor.Visit(this);
 }
